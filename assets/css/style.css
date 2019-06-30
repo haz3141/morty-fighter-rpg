@@ -1,7 +1,15 @@
-#user-choice {
-    float: left;
+#attacker {
+    display: none;
 }
 
-#opponents {
-    float: right;
+#enemies {
+    display: none;
+}
+
+#defender {
+    display: none;
+}
+
+#fight-button {
+    display: none;
 }
