@@ -26,6 +26,7 @@ let defender;
 let userID;
 let defenderID;
 let baseAttackPower;
+let enemiesDefeated = 0;
 
 
 // Starts a new game
@@ -107,7 +108,6 @@ function clickMorty() {
 
             // Toggle defender div and display Mortys
             $('#defender').toggle();
-            // $('#fight-button').toggle();
             $('#enemies .morty-div').remove();
 
             defender.forEach((element) => {
@@ -126,7 +126,7 @@ function clickMorty() {
 function fight() {
     $('button').click(function() {
      
-        if (userMorty[0].hp > 0 && defender[0].hp > 0) {
+        if (defender[0] && userMorty[0].hp > 0 && defender[0].hp > 0) {
 
             userMorty[0].hp -= defender[0].cp;
             defender[0].hp -= userMorty[0].ap;
@@ -144,9 +144,13 @@ function battleCheck() {
     if (defender[0].hp <= 0) {
         $('#defender .morty-div').remove();
         $('#defender').toggle();
-        // $('#fight-button').toggle();
         defender = [];
         defenderSelected = false;
+        enemiesDefeated++;
+        console.log(enemiesDefeated);
+        if (enemiesDefeated === 3) {
+            wonGame();
+        }
         clickMorty();
     } 
     
@@ -189,9 +193,13 @@ function lostGame() {
     });
 }
 
+function wonGame() {
+    $('#messages').html('<p>You Won! Play Again.</p>');
+    $('#fight-button').html('<button>PLAY AGAIN!</button>');
+    $('button').click(function() {
+        window.location.reload();
+    });
+}
+
 newGame();
 clickMorty();
-
-
-   
-
