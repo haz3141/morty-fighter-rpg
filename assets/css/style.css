@@ -1,15 +1,37 @@
 #attacker {
     display: none;
+    float: left;
 }
 
 #enemies {
     display: none;
+    float: right;
 }
 
 #defender {
     display: none;
+    float: left;
 }
 
 #fight-button {
     display: none;
+    width: 100%;
+    position: absolute;
+    bottom: 175px;
+}
+
+button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.morty-div {
+    float: left;
+    text-align: center;
 }
