@@ -12,10 +12,10 @@ class Morty {
 }
 
 // Declare Mortys
-c137 = new Morty('Morty C137', 'c137', 150, 7, 9);
+c137 = new Morty('Morty C137', 'c137', 150, 7, 25);
 lasagna = new Morty('Lasgna Morty', 'lasagna', 125, 9, 7);
 punk = new Morty('Punk Morty', 'punk', 175, 11, 9);
-zombie = new Morty('Zombie Morty', 'zombie', 200, 9, 11);
+zombie = new Morty('Zombie Morty', 'zombie', 200, 9, 22);
 
 // Global Variables
 let fighters = [c137, lasagna, punk, zombie];
@@ -125,20 +125,27 @@ function clickMorty() {
 
 function fight() {
     $('button').click(function() {
-
         
+     
         if (userMorty[0].hp > 0 && defender[0].hp > 0) {
-            
+
             userMorty[0].hp -= defender[0].cp;
             defender[0].hp -= userMorty[0].ap;
             userMorty[0].ap += baseAttackPower;
+            console.log(userMorty[0].hp);
             
-            checkDefender();
-        }
+            updateBattle();
+            console.log('update battle');
+            battleCheck();
+            console.log('battle check');
+            
+        } 
     });
 }
 
-function checkDefender() {
+function battleCheck() {
+    
+    
     if (defender[0].hp <= 0) {
         $('#defender .morty-div').remove();
         $('#defender').toggle();
@@ -146,8 +153,11 @@ function checkDefender() {
         defender = [];
         defenderSelected = false;
         clickMorty();
-    } else {
-        updateBattle();
+    } else if (userMorty[0].hp <= 0) {
+        $('#attacker .morty-div').remove();
+        userMorty.forEach((element) => {
+            displayFighters('#attacker', element.name, 'DEAD', element.id);
+        });
     }
 }
 
@@ -163,6 +173,11 @@ function updateBattle() {
     defender.forEach((element) => {
         displayFighters('#defender', element.name, element.hp, element.id);
     });
+    console.table("dom updated");
+}
+
+function lostGame() {
+    alert('lost');
 }
 
 newGame();
