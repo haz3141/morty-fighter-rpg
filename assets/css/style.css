@@ -2,6 +2,17 @@
     box-sizing: border-box;
 }
 
+@font-face {
+    font-family: getSchwifty;
+    src: url(get_schwifty.ttf);
+}
+
+body {
+    font-family: getSchwifty;
+    color: #4CAF50;
+    background: black;
+}
+
 #attacker {
     display: none;
     float: left;
@@ -39,11 +50,13 @@ button {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    font-family: getSchwifty;
 }
 
 .morty-div {
     float: left;
     text-align: center;
+    padding: 10px;
 }
 
 #messages {
