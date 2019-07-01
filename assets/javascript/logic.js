@@ -93,6 +93,7 @@ function clickMorty() {
             });
 
             // Start listening for clicks again
+            pickAnOpponent();
             clickMorty();
         }
 
@@ -118,6 +119,7 @@ function clickMorty() {
                 displayFighters('#enemies', element.name, element.hp, element.id);
             });
 
+            $('#messages').empty();
             fight();
         }
     });
@@ -151,6 +153,7 @@ function battleCheck() {
         if (enemiesDefeated === 3) {
             wonGame();
         }
+        pickAnOpponent();
         clickMorty();
     } 
     
@@ -199,6 +202,14 @@ function wonGame() {
     $('button').click(function() {
         window.location.reload();
     });
+}
+
+function pickAnOpponent() {
+    if (enemiesDefeated !== 3) {
+        let newDiv = $('<p>').text('Pick an opponent!');
+        $('#messages').empty();
+        $('#messages').prepend(newDiv);
+    }
 }
 
 newGame();
