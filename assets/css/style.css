@@ -6,18 +6,23 @@
 #enemies {
     display: none;
     float: right;
+    position: absolute;
+    left: 50%;
 }
 
 #defender {
     display: none;
     float: left;
+    position: absolute;
+    left: 25%;
 }
 
 #fight-button {
     display: none;
-    width: 100%;
+    max-width: 100%;
     position: absolute;
     bottom: 175px;
+    left: 25%;
 }
 
 button {
