@@ -45,3 +45,8 @@ button {
     float: left;
     text-align: center;
 }
+
+#messages {
+    float: left;
+    clear: both;
+}

@@ -130,15 +130,16 @@ function fight() {
 
             userMorty[0].hp -= defender[0].cp;
             defender[0].hp -= userMorty[0].ap;
+            let userRoundAP = userMorty[0].ap; //Save attack power before update for displaying message
             userMorty[0].ap += baseAttackPower;
 
+            displayMessage('#messages', userMorty[0].name, defender[0].name, userRoundAP, defender[0].cp);
             updateBattle();
         } 
     });
 }
 
 function battleCheck() {
-    
     
     if (defender[0].hp <= 0) {
         $('#defender .morty-div').remove();
@@ -171,6 +172,12 @@ function updateBattle() {
     });
 
     battleCheck();
+}
+
+function displayMessage(targetDiv, attacker, defender, attack, counter) {
+    let newDiv = $('<p>').text(attacker + " hits " + defender + ' for ' + attack + ' HP. ' + defender + ' counters for ' + counter + ' HP.');
+    $(targetDiv).empty();
+    $(targetDiv).prepend(newDiv);
 }
 
 function lostGame() {
