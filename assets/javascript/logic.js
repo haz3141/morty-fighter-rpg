@@ -126,24 +126,42 @@ function clickMorty() {
 function fight() {
     $('button').click(function() {
 
+        
         if (userMorty[0].hp > 0 && defender[0].hp > 0) {
             
             userMorty[0].hp -= defender[0].cp;
             defender[0].hp -= userMorty[0].ap;
             userMorty[0].ap += baseAttackPower;
             
-            // Redraw Mortys
-            $('#attacker .morty-div').remove();
-            $('#defender .morty-div').remove();
-
-            userMorty.forEach((element) => {
-                displayFighters('#attacker', element.name, element.hp, element.id);
-            });
-
-            defender.forEach((element) => {
-                displayFighters('#defender', element.name, element.hp, element.id);
-            });
+            checkDefender();
         }
+    });
+}
+
+function checkDefender() {
+    if (defender[0].hp <= 0) {
+        $('#defender .morty-div').remove();
+        $('#defender').toggle();
+        $('#fight-button').toggle();
+        defender = [];
+        defenderSelected = false;
+        clickMorty();
+    } else {
+        updateBattle();
+    }
+}
+
+function updateBattle() {
+
+    $('#attacker .morty-div').remove();
+    $('#defender .morty-div').remove();
+
+    userMorty.forEach((element) => {
+        displayFighters('#attacker', element.name, element.hp, element.id);
+    });
+
+    defender.forEach((element) => {
+        displayFighters('#defender', element.name, element.hp, element.id);
     });
 }
 
