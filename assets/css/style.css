@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 #attacker {
     display: none;
     float: left;
@@ -19,10 +23,11 @@
 
 #fight-button {
     display: none;
-    max-width: 100%;
+    /* max-width: 100%;
     position: absolute;
     bottom: 175px;
-    left: 25%;
+    left: 25%; */
+    clear: both;
 }
 
 button {
