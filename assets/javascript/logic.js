@@ -2,18 +2,20 @@
 
 // Morty Constructor
 class Morty {
-    constructor(name, id, hp) {
+    constructor(name, id, hp, ap, cp) {
         this.name = name;
         this.id = id;
         this.hp = hp;
+        this.ap = ap;
+        this.cp = cp;
     }
 }
 
 // Declare Mortys
-c137 = new Morty('Morty C137', 'c137', 150);
-lasagna = new Morty('Lasgna Morty', 'lasagna', 125);
-punk = new Morty('Punk Morty', 'punk', 175);
-zombie = new Morty('Zombie Morty', 'zombie', 200);
+c137 = new Morty('Morty C137', 'c137', 150, 7, 9);
+lasagna = new Morty('Lasgna Morty', 'lasagna', 125, 9, 7);
+punk = new Morty('Punk Morty', 'punk', 175, 11, 9);
+zombie = new Morty('Zombie Morty', 'zombie', 200, 9, 11);
 
 // Global Variables
 let fighters = [c137, lasagna, punk, zombie];
@@ -23,6 +25,7 @@ let userMorty;
 let defender;
 let userID;
 let defenderID;
+let baseAttackPower;
 
 
 // Starts a new game
@@ -40,7 +43,8 @@ function debug() {
     console.table(punk);
     console.table(zombie);
     console.table(fighters);
-    console.table(fighters[0].name);
+    console.table(defender);
+    console.table(userMorty);
 }
 
 // Function for rendering a Morty to the screen
@@ -68,6 +72,9 @@ function clickMorty() {
                     userMorty = fighters.splice(i, 1);
                 }
             });
+
+            // Store base attack power for later
+            baseAttackPower = userMorty[0].ap;
 
             // Toggle appropriate divs
             $('#roster').toggle();
@@ -106,19 +113,43 @@ function clickMorty() {
             defender.forEach((element) => {
                 displayFighters('#defender', element.name, element.hp, element.id);
             });
-            
+
             fighters.forEach((element) => {
                 displayFighters('#enemies', element.name, element.hp, element.id);
+            });
+
+            fight();
+        }
+    });
+}
+
+function fight() {
+    $('button').click(function() {
+
+        if (userMorty[0].hp > 0 && defender[0].hp > 0) {
+            
+            userMorty[0].hp -= defender[0].cp;
+            defender[0].hp -= userMorty[0].ap;
+            userMorty[0].ap += baseAttackPower;
+            
+            // Redraw Mortys
+            $('#attacker .morty-div').remove();
+            $('#defender .morty-div').remove();
+
+            userMorty.forEach((element) => {
+                displayFighters('#attacker', element.name, element.hp, element.id);
+            });
+
+            defender.forEach((element) => {
+                displayFighters('#defender', element.name, element.hp, element.id);
             });
         }
     });
 }
 
-
-
 newGame();
 clickMorty();
-debug();
+
 
    
 
