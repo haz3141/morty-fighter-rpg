@@ -107,7 +107,7 @@ function clickMorty() {
 
             // Toggle defender div and display Mortys
             $('#defender').toggle();
-            $('#fight-button').toggle();
+            // $('#fight-button').toggle();
             $('#enemies .morty-div').remove();
 
             defender.forEach((element) => {
@@ -144,7 +144,7 @@ function battleCheck() {
     if (defender[0].hp <= 0) {
         $('#defender .morty-div').remove();
         $('#defender').toggle();
-        $('#fight-button').toggle();
+        // $('#fight-button').toggle();
         defender = [];
         defenderSelected = false;
         clickMorty();
@@ -154,6 +154,7 @@ function battleCheck() {
         $('#attacker .morty-div').remove();
         userMorty.forEach((element) => {
             displayFighters('#attacker', element.name, 'DEAD', element.id);
+            lostGame();
         });
     }
 }
@@ -181,7 +182,11 @@ function displayMessage(targetDiv, attacker, defender, attack, counter) {
 }
 
 function lostGame() {
-    alert('lost');
+    $('#messages').html('<p>You Lost! Try Again.</p>');
+    $('#fight-button').html('<button>TRY AGAIN!</button>');
+    $('button').click(function() {
+        window.location.reload();
+    });
 }
 
 newGame();
