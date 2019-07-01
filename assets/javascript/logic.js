@@ -125,20 +125,14 @@ function clickMorty() {
 
 function fight() {
     $('button').click(function() {
-        
      
         if (userMorty[0].hp > 0 && defender[0].hp > 0) {
 
             userMorty[0].hp -= defender[0].cp;
             defender[0].hp -= userMorty[0].ap;
             userMorty[0].ap += baseAttackPower;
-            console.log(userMorty[0].hp);
-            
+
             updateBattle();
-            console.log('update battle');
-            battleCheck();
-            console.log('battle check');
-            
         } 
     });
 }
@@ -153,7 +147,9 @@ function battleCheck() {
         defender = [];
         defenderSelected = false;
         clickMorty();
-    } else if (userMorty[0].hp <= 0) {
+    } 
+    
+    if (userMorty[0].hp <= 0) {
         $('#attacker .morty-div').remove();
         userMorty.forEach((element) => {
             displayFighters('#attacker', element.name, 'DEAD', element.id);
@@ -173,7 +169,8 @@ function updateBattle() {
     defender.forEach((element) => {
         displayFighters('#defender', element.name, element.hp, element.id);
     });
-    console.table("dom updated");
+
+    battleCheck();
 }
 
 function lostGame() {
