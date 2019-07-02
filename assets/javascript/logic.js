@@ -28,6 +28,7 @@ let defenderID;
 let baseAttackPower;
 let enemiesDefeated = 0;
 
+let ohJeez = new Audio('./assets/audio/oh_jeez.mp3');
 
 // Starts a new game
 function newGame() {
@@ -134,8 +135,9 @@ function fight() {
             defender[0].hp -= userMorty[0].ap;
             let userRoundAP = userMorty[0].ap; //Save attack power before update for displaying message
             userMorty[0].ap += baseAttackPower;
-
+            ohJeez.play();
             displayMessage('#messages', userMorty[0].name, defender[0].name, userRoundAP, defender[0].cp);
+            ohJeez.play();
             updateBattle();
         } 
     });
@@ -211,6 +213,7 @@ function pickAnOpponent() {
         $('#messages').prepend(newDiv);
     }
 }
+
 
 newGame();
 clickMorty();
