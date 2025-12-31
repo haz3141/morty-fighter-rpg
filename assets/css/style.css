@@ -9,7 +9,7 @@
 
 body {
     font-family: getSchwifty;
-    color: #4CAF50;
+    color: #4caf50;
     background: black;
 }
 
@@ -42,7 +42,7 @@ body {
 }
 
 button {
-    background-color: #4CAF50; /* Green */
+    background-color: #4caf50; /* Green */
     border: none;
     color: white;
     padding: 15px 32px;

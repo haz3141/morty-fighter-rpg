@@ -32,7 +32,6 @@ let ohJeez = new Audio('./assets/audio/oh_jeez.mp3');
 
 // Starts a new game
 function newGame() {
-    
     // Display roster of Mortys
     fighters.forEach((element) => {
         displayFighters('#roster', element.name, element.hp, element.id);
@@ -52,18 +51,17 @@ function debug() {
 // Function for rendering a Morty to the screen
 function displayFighters(targetDiv, name, hp, id) {
     let newDiv = $('<div>');
-    $(newDiv).attr({class: 'morty-div', id: id});
+    $(newDiv).attr({ class: 'morty-div', id: id });
     let nameDiv = $('<p></p>').text(name);
     let hpDiv = $('<p></p>').text(hp);
-    let imgDiv = $('<img>').attr({src: 'assets/images/' + id + '.png', height: '150px', id: id});
+    let imgDiv = $('<img>').attr({ src: 'assets/images/' + id + '.png', height: '150px', id: id });
     $(newDiv).append(nameDiv).append(imgDiv).append(hpDiv);
     $(targetDiv).append(newDiv);
 }
 
 // Click a Morty
 function clickMorty() {
-    $('img').click(function() {
-
+    $('img').click(function () {
         if (!userSelected) {
             userSelected = true;
             userID = this.id;
@@ -127,24 +125,27 @@ function clickMorty() {
 }
 
 function fight() {
-    $('button').click(function() {
-     
+    $('button').click(function () {
         if (defender[0] && userMorty[0].hp > 0 && defender[0].hp > 0) {
-
             userMorty[0].hp -= defender[0].cp;
             defender[0].hp -= userMorty[0].ap;
             let userRoundAP = userMorty[0].ap; //Save attack power before update for displaying message
             userMorty[0].ap += baseAttackPower;
             ohJeez.play();
-            displayMessage('#messages', userMorty[0].name, defender[0].name, userRoundAP, defender[0].cp);
+            displayMessage(
+                '#messages',
+                userMorty[0].name,
+                defender[0].name,
+                userRoundAP,
+                defender[0].cp
+            );
             ohJeez.play();
             updateBattle();
-        } 
+        }
     });
 }
 
 function battleCheck() {
-    
     if (defender[0].hp <= 0) {
         $('#defender .morty-div').remove();
         $('#defender').toggle();
@@ -157,8 +158,8 @@ function battleCheck() {
         }
         pickAnOpponent();
         clickMorty();
-    } 
-    
+    }
+
     if (userMorty[0].hp <= 0) {
         $('#attacker .morty-div').remove();
         userMorty.forEach((element) => {
@@ -169,7 +170,6 @@ function battleCheck() {
 }
 
 function updateBattle() {
-
     $('#attacker .morty-div').remove();
     $('#defender .morty-div').remove();
 
@@ -185,7 +185,18 @@ function updateBattle() {
 }
 
 function displayMessage(targetDiv, attacker, defender, attack, counter) {
-    let newDiv = $('<p>').text(attacker + " hits " + defender + ' for ' + attack + ' HP. ' + defender + ' counters for ' + counter + ' HP.');
+    let newDiv = $('<p>').text(
+        attacker +
+            ' hits ' +
+            defender +
+            ' for ' +
+            attack +
+            ' HP. ' +
+            defender +
+            ' counters for ' +
+            counter +
+            ' HP.'
+    );
     $(targetDiv).empty();
     $(targetDiv).prepend(newDiv);
 }
@@ -193,7 +204,7 @@ function displayMessage(targetDiv, attacker, defender, attack, counter) {
 function lostGame() {
     $('#messages').html('<p>You Lost! Try Again.</p>');
     $('#fight-button').html('<button>TRY AGAIN!</button>');
-    $('button').click(function() {
+    $('button').click(function () {
         window.location.reload();
     });
 }
@@ -201,7 +212,7 @@ function lostGame() {
 function wonGame() {
     $('#messages').html('<p>You Won! Play Again.</p>');
     $('#fight-button').html('<button>PLAY AGAIN!</button>');
-    $('button').click(function() {
+    $('button').click(function () {
         window.location.reload();
     });
 }
@@ -213,7 +224,6 @@ function pickAnOpponent() {
         $('#messages').prepend(newDiv);
     }
 }
-
 
 newGame();
 clickMorty();
