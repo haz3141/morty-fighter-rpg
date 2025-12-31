@@ -1,0 +1,22 @@
+{
+    "name": "morty-fighter-rpg",
+    "version": "1.0.0",
+    "description": "A role playing game where the user selects a character and then fights the remaining characters. Built using HTML, CSS, and jQuery.",
+    "private": true,
+    "packageManager": "pnpm@9.15.4",
+    "type": "module",
+    "scripts": {
+        "dev": "serve -l 3000",
+        "lint": "eslint assets/javascript/",
+        "lint:fix": "eslint assets/javascript/ --fix",
+        "format": "prettier --write \"**/*.{html,css,js,json,md}\"",
+        "format:check": "prettier --check \"**/*.{html,css,js,json,md}\""
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.17.0",
+        "eslint": "^9.17.0",
+        "globals": "^15.14.0",
+        "prettier": "^3.4.2",
+        "serve": "^14.2.4"
+    }
+}
