@@ -7,21 +7,22 @@
         <title>Morty Fighter RPG</title>
         <link rel="stylesheet" href="assets/css/style.css" />
     </head>
+
     <body>
         <div id="game">
             <div id="roster">
                 <h2>Select your Morty!</h2>
             </div>
 
-            <div id="attacker">
+            <div id="attacker" class="hidden">
                 <h2>Your Morty!</h2>
             </div>
 
-            <div id="enemies">
+            <div id="enemies" class="hidden">
                 <h2>Your Opponents!</h2>
             </div>
 
-            <div id="defender">
+            <div id="defender" class="hidden">
                 <h2>Finish Him!!</h2>
             </div>
 
@@ -33,8 +34,6 @@
         </div>
 
         <!-- Scripts -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="assets/javascript/logic.js"></script>
-        <!-- <script src="assets/javascript/game.js"></script> -->
+        <script type="module" src="assets/javascript/main.js"></script>
     </body>
 </html>
