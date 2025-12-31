@@ -2,6 +2,10 @@
     box-sizing: border-box;
 }
 
+.hidden {
+    display: none !important;
+}
+
 @font-face {
     font-family: getSchwifty;
     src: url(get_schwifty.ttf);
@@ -14,19 +18,16 @@ body {
 }
 
 #attacker {
-    display: none;
     float: left;
 }
 
 #enemies {
-    display: none;
     float: right;
     position: absolute;
     left: 50%;
 }
 
 #defender {
-    display: none;
     float: left;
     position: absolute;
     left: 25%;
@@ -42,7 +43,8 @@ body {
 }
 
 button {
-    background-color: #4caf50; /* Green */
+    background-color: #4caf50;
+    /* Green */
     border: none;
     color: white;
     padding: 15px 32px;
