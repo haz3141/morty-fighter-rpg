@@ -2,16 +2,52 @@
 
 import { Phase } from './state.js';
 
-// Cache DOM elements
-const dom = {
-    roster: document.getElementById('roster'),
-    attacker: document.getElementById('attacker'),
-    enemies: document.getElementById('enemies'),
-    defender: document.getElementById('defender'),
-    fightButton: document.getElementById('fight-button'),
-    messages: document.getElementById('messages'),
-    button: document.querySelector('#fight-button button'),
-};
+// Define required mount point IDs
+const MOUNT_IDS = [
+    'appHeader',
+    'appMain',
+    'panelPlayer',
+    'panelArena',
+    'panelEnemies',
+    'mountPhase',
+    'mountActions',
+    'mountPlayer',
+    'mountEnemies',
+    'mountLog',
+    'roster',
+];
+
+/**
+ * Element cache with fail-fast validation
+ */
+let el = null;
+
+function initElements() {
+    const elements = {};
+    const missing = [];
+
+    for (const id of MOUNT_IDS) {
+        const element = document.getElementById(id);
+        if (!element) {
+            missing.push(id);
+        } else {
+            elements[id] = element;
+        }
+    }
+
+    if (missing.length > 0) {
+        throw new Error(`Missing required mount points: ${missing.join(', ')}`);
+    }
+
+    return elements;
+}
+
+/**
+ * Initialize element cache (call after DOM ready)
+ */
+export function initUI() {
+    el = initElements();
+}
 
 /**
  * Create a fighter card element
@@ -53,15 +89,134 @@ function clearFighters(container) {
 
 /**
  * Show or hide an element using the .hidden class
- * @param {HTMLElement} el
+ * @param {HTMLElement} element
  * @param {boolean} visible
  */
-function setVisible(el, visible) {
+function setVisible(element, visible) {
     if (visible) {
-        el.classList.remove('hidden');
+        element.classList.remove('hidden');
     } else {
-        el.classList.add('hidden');
+        element.classList.add('hidden');
     }
+}
+
+/**
+ * Render the phase indicator
+ * @param {Object} state
+ */
+function renderPhase(state) {
+    const { phase } = state;
+    let text = '';
+
+    switch (phase) {
+        case Phase.PICK_PLAYER:
+            text = 'Choose your fighter';
+            break;
+        case Phase.PICK_ENEMY:
+            text = 'Pick an opponent';
+            break;
+        case Phase.BATTLE:
+            text = 'Battle!';
+            break;
+        case Phase.GAME_OVER:
+            text = state.gameResult === 'won' ? 'Victory!' : 'Defeat!';
+            break;
+    }
+
+    el.mountPhase.textContent = text;
+}
+
+/**
+ * Render the action button (still uses legacy button for now)
+ * @param {Object} state
+ */
+function renderActions(state) {
+    // Placeholder - will be enhanced in Commit 5
+}
+
+/**
+ * Render the player card
+ * @param {Object} state
+ */
+function renderPlayer(state) {
+    const { phase, player } = state;
+
+    clearFighters(el.mountPlayer);
+
+    if (phase === Phase.PICK_PLAYER) {
+        setVisible(el.panelPlayer, false);
+        return;
+    }
+
+    setVisible(el.panelPlayer, true);
+
+    if (player) {
+        const hpDisplay = player.hp <= 0 ? 'DEAD' : player.hp;
+        el.mountPlayer.appendChild(createFighterCard(player, hpDisplay));
+    }
+}
+
+/**
+ * Render the enemies
+ * @param {Object} state
+ */
+function renderEnemies(state) {
+    const { phase, enemies, enemy } = state;
+
+    clearFighters(el.mountEnemies);
+
+    if (phase === Phase.PICK_PLAYER || phase === Phase.GAME_OVER) {
+        setVisible(el.panelEnemies, false);
+        return;
+    }
+
+    setVisible(el.panelEnemies, true);
+
+    // In pick enemy phase, show all available enemies
+    if (phase === Phase.PICK_ENEMY) {
+        enemies.forEach((e) => {
+            el.mountEnemies.appendChild(createFighterCard(e));
+        });
+    }
+
+    // In battle phase, show current defender + remaining enemies
+    if (phase === Phase.BATTLE) {
+        if (enemy) {
+            const card = createFighterCard(enemy);
+            card.classList.add('defender');
+            el.mountEnemies.appendChild(card);
+        }
+        enemies.forEach((e) => {
+            el.mountEnemies.appendChild(createFighterCard(e));
+        });
+    }
+}
+
+/**
+ * Render the combat log (placeholder - implemented in Commit 3)
+ * @param {Object} state
+ */
+function renderLog(state) {
+    // Will be implemented in Commit 3
+}
+
+/**
+ * Render all UI components
+ * @param {Object} state
+ */
+function renderAll(state) {
+    const { phase } = state;
+
+    // Show/hide main sections based on phase
+    setVisible(el.roster, phase === Phase.PICK_PLAYER);
+    setVisible(el.appMain, phase !== Phase.PICK_PLAYER);
+
+    // Render each component
+    renderPhase(state);
+    renderActions(state);
+    renderPlayer(state);
+    renderEnemies(state);
+    renderLog(state);
 }
 
 /**
@@ -71,71 +226,25 @@ function setVisible(el, visible) {
 export function render(state) {
     const { phase, player, enemy, enemies, message, gameResult } = state;
 
-    // Update message
-    dom.messages.innerHTML = `<p>${message}</p>`;
+    // Use new mount-based rendering
+    renderAll(state);
 
-    // Update button text based on game state
-    if (gameResult === 'won') {
-        dom.button.textContent = 'PLAY AGAIN!';
-    } else if (gameResult === 'lost') {
-        dom.button.textContent = 'TRY AGAIN!';
-    } else {
-        dom.button.textContent = 'FIGHT!!!';
+    // Legacy: Update message (will move to renderLog in Commit 3)
+    const messagesEl = document.getElementById('messages');
+    if (messagesEl) {
+        messagesEl.innerHTML = `<p>${message}</p>`;
     }
 
-    // Show/hide sections based on phase
-    switch (phase) {
-        case Phase.PICK_PLAYER:
-            setVisible(dom.roster, true);
-            setVisible(dom.attacker, false);
-            setVisible(dom.enemies, false);
-            setVisible(dom.defender, false);
-            break;
-
-        case Phase.PICK_ENEMY:
-            setVisible(dom.roster, false);
-            setVisible(dom.attacker, true);
-            setVisible(dom.enemies, true);
-            setVisible(dom.defender, false);
-            break;
-
-        case Phase.BATTLE:
-            setVisible(dom.roster, false);
-            setVisible(dom.attacker, true);
-            setVisible(dom.enemies, true);
-            setVisible(dom.defender, true);
-            break;
-
-        case Phase.GAME_OVER:
-            setVisible(dom.roster, false);
-            setVisible(dom.attacker, true);
-            setVisible(dom.enemies, false);
-            setVisible(dom.defender, false);
-            break;
-    }
-
-    // NOTE: Roster is NOT cleared/rendered here during PICK_PLAYER phase.
-    // It's managed separately by renderRoster() to avoid being wiped.
-
-    // Render player
-    clearFighters(dom.attacker);
-    if (player) {
-        const hpDisplay = player.hp <= 0 ? 'DEAD' : player.hp;
-        dom.attacker.appendChild(createFighterCard(player, hpDisplay));
-    }
-
-    // Render available enemies
-    clearFighters(dom.enemies);
-    if (phase === Phase.PICK_ENEMY || phase === Phase.BATTLE) {
-        enemies.forEach((e) => {
-            dom.enemies.appendChild(createFighterCard(e));
-        });
-    }
-
-    // Render current defender
-    clearFighters(dom.defender);
-    if (enemy && phase === Phase.BATTLE) {
-        dom.defender.appendChild(createFighterCard(enemy));
+    // Legacy: Update button text (will move to renderActions in Commit 5)
+    const button = document.querySelector('#fight-button button');
+    if (button) {
+        if (gameResult === 'won') {
+            button.textContent = 'PLAY AGAIN!';
+        } else if (gameResult === 'lost') {
+            button.textContent = 'TRY AGAIN!';
+        } else {
+            button.textContent = 'FIGHT!!!';
+        }
     }
 }
 
@@ -144,9 +253,9 @@ export function render(state) {
  * @param {Array} roster
  */
 export function renderRoster(roster) {
-    clearFighters(dom.roster);
+    clearFighters(el.roster);
     roster.forEach((fighter) => {
-        dom.roster.appendChild(createFighterCard(fighter));
+        el.roster.appendChild(createFighterCard(fighter));
     });
 }
 
@@ -161,5 +270,5 @@ export function getGameContainer() {
  * Get the fight button element
  */
 export function getFightButton() {
-    return dom.button;
+    return document.querySelector('#fight-button button');
 }

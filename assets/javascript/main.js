@@ -2,7 +2,7 @@
 
 import { state, resetState, ROSTER, Phase, Fighter } from './state.js';
 import { executeCombatRound, checkBattleOutcome, getCombatMessage } from './engine.js';
-import { render, renderRoster, getGameContainer, getFightButton } from './ui.js';
+import { render, renderRoster, getGameContainer, getFightButton, initUI } from './ui.js';
 
 // Audio
 const ohJeez = new Audio('./assets/audio/oh_jeez.mp3');
@@ -140,6 +140,7 @@ function setupEventListeners() {
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+    initUI(); // Initialize UI element cache
     setupEventListeners();
     currentRoster = initGame();
 });
