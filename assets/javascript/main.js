@@ -43,6 +43,7 @@ function handleFighterClick(fighterId) {
         state.enemies = currentRoster; // Remaining fighters become enemies
         state.phase = Phase.PICK_ENEMY;
         state.message = 'Pick an opponent!';
+        state.log.push(`${selectedFighter.name} enters the arena!`);
         render(state);
     } else if (state.phase === Phase.PICK_ENEMY) {
         // Don't allow clicking own fighter
@@ -56,6 +57,7 @@ function handleFighterClick(fighterId) {
         state.enemy = selectedEnemy;
         state.phase = Phase.BATTLE;
         state.message = '';
+        state.log.push(`${selectedEnemy.name} accepts the challenge!`);
         render(state);
     }
 }
@@ -69,13 +71,15 @@ function handleFightClick() {
         const result = executeCombatRound(state);
         ohJeez.play();
 
-        // Update message
-        state.message = getCombatMessage(
+        // Generate combat message and add to log
+        const combatMsg = getCombatMessage(
             state.player.name,
             state.enemy.name,
             result.playerDamage,
             result.enemyDamage
         );
+        state.message = combatMsg;
+        state.log.push(combatMsg);
 
         // Check outcome
         const outcome = checkBattleOutcome(state);
@@ -86,16 +90,19 @@ function handleFightClick() {
                 state.phase = Phase.GAME_OVER;
                 state.gameResult = 'won';
                 state.message = 'You Won! Play Again.';
+                state.log.push('🏆 Victory! All enemies defeated!');
                 break;
 
             case 'playerDead':
                 state.phase = Phase.GAME_OVER;
                 state.gameResult = 'lost';
                 state.message = 'You Lost! Try Again.';
+                state.log.push('💀 Defeat! Your Morty has fallen!');
                 break;
 
             case 'enemyDead':
                 state.enemiesDefeated++;
+                state.log.push(`${state.enemy.name} is defeated!`);
                 state.enemy = null;
                 state.phase = Phase.PICK_ENEMY;
                 state.message = 'Pick an opponent!';

@@ -54,6 +54,7 @@ export function createInitialState() {
         enemiesDefeated: 0,
         message: 'Select your Morty!',
         gameResult: null, // 'won' | 'lost' | null
+        log: [], // Combat log history
     };
 }
 

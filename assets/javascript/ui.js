@@ -193,11 +193,32 @@ function renderEnemies(state) {
 }
 
 /**
- * Render the combat log (placeholder - implemented in Commit 3)
+ * Render the combat log
  * @param {Object} state
  */
 function renderLog(state) {
-    // Will be implemented in Commit 3
+    const { log = [], message } = state;
+
+    el.mountLog.innerHTML = '';
+
+    // If no log entries yet, show current message
+    if (log.length === 0 && message) {
+        const p = document.createElement('p');
+        p.textContent = message;
+        el.mountLog.appendChild(p);
+        return;
+    }
+
+    // Show last 8 log entries
+    const entries = log.slice(-8);
+    entries.forEach((entry) => {
+        const p = document.createElement('p');
+        p.textContent = entry;
+        el.mountLog.appendChild(p);
+    });
+
+    // Auto-scroll to bottom
+    el.mountLog.scrollTop = el.mountLog.scrollHeight;
 }
 
 /**
