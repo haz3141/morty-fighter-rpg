@@ -15,31 +15,68 @@ body {
     font-family: getSchwifty;
     color: #4caf50;
     background: black;
+    margin: 0;
 }
 
-#attacker {
-    float: left;
+#appHeader,
+#appMain {
+    padding: 16px;
 }
 
-#enemies {
-    float: right;
-    position: absolute;
-    left: 50%;
+#appHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #214d21;
 }
 
-#defender {
-    float: left;
-    position: absolute;
-    left: 25%;
+#appHeader h1 {
+    margin: 0 0 8px;
 }
 
-#fight-button {
-    /* display: none; */
-    /* max-width: 100%;
-    position: absolute;
-    bottom: 175px;
-    left: 25%; */
-    clear: both;
+#mountPhase {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #4caf50;
+    background: rgba(76, 175, 80, 0.08);
+    font-size: 14px;
+}
+
+#appMain {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+#panelPlayer,
+#panelArena,
+#panelEnemies {
+    padding: 16px;
+    border: 1px solid #2f6b2f;
+    border-radius: 12px;
+    background: #050505;
+    min-height: 240px;
+}
+
+#panelPlayer h2,
+#panelArena h2,
+#panelEnemies h2 {
+    margin-top: 0;
+}
+
+#mountPlayer,
+#mountEnemies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+#mountActions {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 16px;
 }
 
 button {
@@ -53,15 +90,61 @@ button {
     display: inline-block;
     font-size: 16px;
     font-family: getSchwifty;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #2f6b2f;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .morty-div {
-    float: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     text-align: center;
     padding: 10px;
+    border: 1px solid #214d21;
+    border-radius: 10px;
+    background: #0b0b0b;
+    min-width: 140px;
 }
 
-#messages {
-    float: left;
-    clear: both;
+.morty-div img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+#mountLog {
+    min-height: 120px;
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid #214d21;
+    border-radius: 10px;
+    padding: 12px;
+    background: #0b0b0b;
+}
+
+.combat-log {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    #appMain {
+        grid-template-columns: 1fr;
+    }
+
+    #appHeader h1 {
+        margin-bottom: 0;
+    }
 }
