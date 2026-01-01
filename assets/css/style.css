@@ -65,3 +65,40 @@ button {
     float: left;
     clear: both;
 }
+
+/* New mount points (Commit 1: minimal visibility) */
+#appHeader {
+    text-align: center;
+    padding: 1rem;
+}
+
+#appHeader h1 {
+    margin: 0;
+}
+
+#mountPhase {
+    min-height: 1rem;
+}
+
+#appMain {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+#panelPlayer,
+#panelArena,
+#panelEnemies {
+    flex: 1;
+}
+
+#mountPlayer,
+#mountEnemies {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#mountLog {
+    max-height: 200px;
+    overflow-y: auto;
+}
