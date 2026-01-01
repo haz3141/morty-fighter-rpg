@@ -11,94 +11,234 @@
     src: url(get_schwifty.ttf);
 }
 
+:root {
+    --color-primary: #4caf50;
+    --color-primary-dark: #388e3c;
+    --color-bg: #0a0a0a;
+    --color-surface: #1a1a1a;
+    --color-surface-light: #2a2a2a;
+    --color-text: #4caf50;
+    --color-text-muted: #2e7d32;
+    --color-danger: #ef5350;
+    --color-border: #333;
+    --radius: 8px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
 body {
-    font-family: getSchwifty;
-    color: #4caf50;
-    background: black;
+    font-family: getSchwifty, 'Segoe UI', sans-serif;
+    color: var(--color-text);
+    background: var(--color-bg);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
 }
 
-#attacker {
-    float: left;
+#game {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
 }
 
-#enemies {
-    float: right;
-    position: absolute;
-    left: 50%;
-}
-
-#defender {
-    float: left;
-    position: absolute;
-    left: 25%;
-}
-
-#fight-button {
-    /* display: none; */
-    /* max-width: 100%;
-    position: absolute;
-    bottom: 175px;
-    left: 25%; */
-    clear: both;
-}
-
-button {
-    background-color: #4caf50;
-    /* Green */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    font-family: getSchwifty;
-}
-
-.morty-div {
-    float: left;
-    text-align: center;
-    padding: 10px;
-}
-
-#messages {
-    float: left;
-    clear: both;
-}
-
-/* New mount points (Commit 1: minimal visibility) */
+/* App Header */
 #appHeader {
     text-align: center;
     padding: 1rem;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: 1rem;
 }
 
 #appHeader h1 {
     margin: 0;
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
 }
 
 #mountPhase {
-    min-height: 1rem;
+    margin-top: 0.5rem;
+    padding: 0.25rem 1rem;
+    display: inline-block;
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    color: var(--color-text-muted);
 }
 
+/* Main 3-Panel Layout using CSS Grid */
 #appMain {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
     gap: 1rem;
-    padding: 1rem;
+    min-height: 400px;
 }
 
 #panelPlayer,
 #panelArena,
 #panelEnemies {
-    flex: 1;
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+}
+
+#panelPlayer h2,
+#panelEnemies h2 {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+#panelArena {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+#mountActions {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+#mountLog {
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+    background: var(--color-bg);
+    border-radius: var(--radius);
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+}
+
+#mountLog p {
+    margin: 0.25rem 0;
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+}
+
+#mountLog p:last-child {
+    border-bottom: none;
+    color: var(--color-text);
 }
 
 #mountPlayer,
 #mountEnemies {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
-#mountLog {
-    max-height: 200px;
-    overflow-y: auto;
+/* Roster (pick player phase) */
+#roster {
+    padding: 1rem;
+    text-align: center;
+}
+
+#roster h2 {
+    margin-bottom: 1rem;
+}
+
+#roster .morty-div {
+    display: inline-block;
+}
+
+/* Fighter cards */
+.morty-div {
+    text-align: center;
+    padding: 0.75rem;
+    cursor: pointer;
+    background: var(--color-surface-light);
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.morty-div:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.morty-div img {
+    display: block;
+    margin: 0 auto;
+}
+
+.morty-div p {
+    margin: 0.5rem 0 0 0;
+}
+
+.morty-div.defender {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 10px rgba(239, 83, 80, 0.3);
+}
+
+/* Buttons */
+button {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.25rem;
+    font-family: getSchwifty, 'Segoe UI', sans-serif;
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+button:disabled {
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Legacy elements (hidden during new layout) */
+#attacker,
+#enemies,
+#defender {
+    display: none;
+}
+
+#fight-button {
+    display: none;
+}
+
+#messages {
+    display: none;
+}
+
+/* Responsive: Stack panels on mobile */
+@media (max-width: 768px) {
+    #appMain {
+        grid-template-columns: 1fr;
+    }
+
+    #panelPlayer,
+    #panelArena,
+    #panelEnemies {
+        min-height: auto;
+    }
+
+    #appHeader h1 {
+        font-size: 1.5rem;
+    }
 }
