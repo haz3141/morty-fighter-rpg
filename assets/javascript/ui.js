@@ -127,11 +127,38 @@ function renderPhase(state) {
 }
 
 /**
- * Render the action button (still uses legacy button for now)
+ * Render the action button with phase-aware labels and states
  * @param {Object} state
  */
 function renderActions(state) {
-    // Placeholder - will be enhanced in Commit 5
+    const { phase, gameResult } = state;
+
+    // Clear and recreate button
+    el.mountActions.innerHTML = '';
+
+    const button = document.createElement('button');
+    button.id = 'fightButton';
+
+    switch (phase) {
+        case Phase.PICK_PLAYER:
+            button.textContent = 'Select a fighter';
+            button.disabled = true;
+            break;
+        case Phase.PICK_ENEMY:
+            button.textContent = 'Select an enemy';
+            button.disabled = true;
+            break;
+        case Phase.BATTLE:
+            button.textContent = 'Fight!';
+            button.disabled = false;
+            break;
+        case Phase.GAME_OVER:
+            button.textContent = gameResult === 'won' ? 'Play Again!' : 'Try Again!';
+            button.disabled = false;
+            break;
+    }
+
+    el.mountActions.appendChild(button);
 }
 
 /**
@@ -245,28 +272,8 @@ function renderAll(state) {
  * @param {Object} state
  */
 export function render(state) {
-    const { phase, player, enemy, enemies, message, gameResult } = state;
-
     // Use new mount-based rendering
     renderAll(state);
-
-    // Legacy: Update message (will move to renderLog in Commit 3)
-    const messagesEl = document.getElementById('messages');
-    if (messagesEl) {
-        messagesEl.innerHTML = `<p>${message}</p>`;
-    }
-
-    // Legacy: Update button text (will move to renderActions in Commit 5)
-    const button = document.querySelector('#fight-button button');
-    if (button) {
-        if (gameResult === 'won') {
-            button.textContent = 'PLAY AGAIN!';
-        } else if (gameResult === 'lost') {
-            button.textContent = 'TRY AGAIN!';
-        } else {
-            button.textContent = 'FIGHT!!!';
-        }
-    }
 }
 
 /**
@@ -285,11 +292,4 @@ export function renderRoster(roster) {
  */
 export function getGameContainer() {
     return document.getElementById('game');
-}
-
-/**
- * Get the fight button element
- */
-export function getFightButton() {
-    return document.querySelector('#fight-button button');
 }

@@ -2,7 +2,7 @@
 
 import { state, resetState, ROSTER, Phase, Fighter } from './state.js';
 import { executeCombatRound, checkBattleOutcome, getCombatMessage } from './engine.js';
-import { render, renderRoster, getGameContainer, getFightButton, initUI } from './ui.js';
+import { render, renderRoster, getGameContainer, initUI } from './ui.js';
 
 // Audio
 const ohJeez = new Audio('./assets/audio/oh_jeez.mp3');
@@ -126,7 +126,6 @@ function handleFightClick() {
  */
 function setupEventListeners() {
     const gameContainer = getGameContainer();
-    const fightButton = getFightButton();
 
     // Event delegation for fighter selection
     gameContainer.addEventListener('click', (e) => {
@@ -139,10 +138,12 @@ function setupEventListeners() {
             const fighterId = target.closest('[data-fighter-id]').dataset.fighterId;
             handleFighterClick(fighterId);
         }
-    });
 
-    // Fight button
-    fightButton.addEventListener('click', handleFightClick);
+        // Fight button (dynamically created, use event delegation)
+        if (target.id === 'fightButton' || target.closest('#fightButton')) {
+            handleFightClick();
+        }
+    });
 }
 
 // Initialize on DOM ready
