@@ -2,16 +2,35 @@
 
 import { Phase } from './state.js';
 
-// Cache DOM elements
-const dom = {
-    roster: document.getElementById('roster'),
-    attacker: document.getElementById('attacker'),
-    enemies: document.getElementById('enemies'),
-    defender: document.getElementById('defender'),
-    fightButton: document.getElementById('fight-button'),
-    messages: document.getElementById('messages'),
-    button: document.querySelector('#fight-button button'),
-};
+const el = (() => {
+    const mounts = {
+        appMain: document.getElementById('appMain'),
+        mountPhase: document.getElementById('mountPhase'),
+        mountActions: document.getElementById('mountActions'),
+        mountPlayer: document.getElementById('mountPlayer'),
+        mountEnemies: document.getElementById('mountEnemies'),
+        mountLog: document.getElementById('mountLog'),
+    };
+
+    const missing = Object.entries(mounts)
+        .filter(([, value]) => !value)
+        .map(([key]) => key);
+
+    if (missing.length) {
+        throw new Error(`Missing required UI mount(s): ${missing.join(', ')}`);
+    }
+
+    const actionsButton = mounts.mountActions.querySelector('button');
+
+    if (!actionsButton) {
+        throw new Error('Missing primary action button inside #mountActions');
+    }
+
+    return {
+        ...mounts,
+        actionsButton,
+    };
+})();
 
 /**
  * Create a fighter card element
@@ -56,87 +75,96 @@ function clearFighters(container) {
  * @param {HTMLElement} el
  * @param {boolean} visible
  */
-function setVisible(el, visible) {
-    if (visible) {
-        el.classList.remove('hidden');
-    } else {
-        el.classList.add('hidden');
+function getPhaseLabel(phase) {
+    switch (phase) {
+        case Phase.PICK_PLAYER:
+            return 'Pick Your Fighter';
+        case Phase.PICK_ENEMY:
+            return 'Pick an Opponent';
+        case Phase.BATTLE:
+            return 'Battle!';
+        case Phase.GAME_OVER:
+            return 'Game Over';
+        default:
+            return '';
     }
 }
 
-/**
- * Render the entire UI based on game state
- * @param {Object} state
- */
-export function render(state) {
-    const { phase, player, enemy, enemies, message, gameResult } = state;
+export function renderPhase(state) {
+    el.mountPhase.textContent = getPhaseLabel(state.phase);
+}
 
-    // Update message
-    dom.messages.innerHTML = `<p>${message}</p>`;
+export function renderActions(state) {
+    if (state.phase === Phase.PICK_PLAYER) {
+        el.actionsButton.textContent = 'Select a fighter';
+        el.actionsButton.disabled = true;
+        return;
+    }
 
-    // Update button text based on game state
-    if (gameResult === 'won') {
-        dom.button.textContent = 'PLAY AGAIN!';
-    } else if (gameResult === 'lost') {
-        dom.button.textContent = 'TRY AGAIN!';
+    if (state.phase === Phase.PICK_ENEMY) {
+        el.actionsButton.textContent = 'Select an enemy';
+        el.actionsButton.disabled = true;
+        return;
+    }
+
+    el.actionsButton.disabled = false;
+
+    if (state.gameResult === 'won') {
+        el.actionsButton.textContent = 'PLAY AGAIN!';
+    } else if (state.gameResult === 'lost') {
+        el.actionsButton.textContent = 'TRY AGAIN!';
     } else {
-        dom.button.textContent = 'FIGHT!!!';
+        el.actionsButton.textContent = 'Fight!';
+    }
+}
+
+export function renderPlayer(state) {
+    if (state.phase === Phase.PICK_PLAYER) {
+        return;
     }
 
-    // Show/hide sections based on phase
-    switch (phase) {
-        case Phase.PICK_PLAYER:
-            setVisible(dom.roster, true);
-            setVisible(dom.attacker, false);
-            setVisible(dom.enemies, false);
-            setVisible(dom.defender, false);
-            break;
-
-        case Phase.PICK_ENEMY:
-            setVisible(dom.roster, false);
-            setVisible(dom.attacker, true);
-            setVisible(dom.enemies, true);
-            setVisible(dom.defender, false);
-            break;
-
-        case Phase.BATTLE:
-            setVisible(dom.roster, false);
-            setVisible(dom.attacker, true);
-            setVisible(dom.enemies, true);
-            setVisible(dom.defender, true);
-            break;
-
-        case Phase.GAME_OVER:
-            setVisible(dom.roster, false);
-            setVisible(dom.attacker, true);
-            setVisible(dom.enemies, false);
-            setVisible(dom.defender, false);
-            break;
+    clearFighters(el.mountPlayer);
+    if (state.player) {
+        const hpDisplay = state.player.hp <= 0 ? 'DEAD' : state.player.hp;
+        el.mountPlayer.appendChild(createFighterCard(state.player, hpDisplay));
     }
+}
 
-    // NOTE: Roster is NOT cleared/rendered here during PICK_PLAYER phase.
-    // It's managed separately by renderRoster() to avoid being wiped.
+export function renderEnemies(state) {
+    clearFighters(el.mountEnemies);
 
-    // Render player
-    clearFighters(dom.attacker);
-    if (player) {
-        const hpDisplay = player.hp <= 0 ? 'DEAD' : player.hp;
-        dom.attacker.appendChild(createFighterCard(player, hpDisplay));
-    }
+    if (state.phase === Phase.PICK_ENEMY || state.phase === Phase.BATTLE) {
+        if (state.enemy && state.phase === Phase.BATTLE) {
+            el.mountEnemies.appendChild(createFighterCard(state.enemy));
+        }
 
-    // Render available enemies
-    clearFighters(dom.enemies);
-    if (phase === Phase.PICK_ENEMY || phase === Phase.BATTLE) {
-        enemies.forEach((e) => {
-            dom.enemies.appendChild(createFighterCard(e));
+        state.enemies.forEach((enemy) => {
+            el.mountEnemies.appendChild(createFighterCard(enemy));
         });
     }
+}
 
-    // Render current defender
-    clearFighters(dom.defender);
-    if (enemy && phase === Phase.BATTLE) {
-        dom.defender.appendChild(createFighterCard(enemy));
-    }
+export function renderLog(state) {
+    const entries = (state.log || []).slice(-8);
+    const list = document.createElement('ul');
+    list.className = 'combat-log';
+
+    entries.forEach((entry) => {
+        const item = document.createElement('li');
+        item.textContent = entry;
+        list.appendChild(item);
+    });
+
+    el.mountLog.innerHTML = '';
+    el.mountLog.appendChild(list);
+}
+
+export function renderAll(state) {
+    renderPhase(state);
+    renderActions(state);
+    renderPlayer(state);
+    renderEnemies(state);
+    renderLog(state);
 }
 
 /**
@@ -144,9 +172,9 @@ export function render(state) {
  * @param {Array} roster
  */
 export function renderRoster(roster) {
-    clearFighters(dom.roster);
+    clearFighters(el.mountPlayer);
     roster.forEach((fighter) => {
-        dom.roster.appendChild(createFighterCard(fighter));
+        el.mountPlayer.appendChild(createFighterCard(fighter));
     });
 }
 
@@ -154,12 +182,12 @@ export function renderRoster(roster) {
  * Get the DOM container for event delegation
  */
 export function getGameContainer() {
-    return document.getElementById('game');
+    return el.appMain;
 }
 
 /**
  * Get the fight button element
  */
 export function getFightButton() {
-    return dom.button;
+    return el.actionsButton;
 }

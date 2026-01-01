@@ -53,6 +53,7 @@ export function createInitialState() {
         enemies: [],
         enemiesDefeated: 0,
         message: 'Select your Morty!',
+        log: [],
         gameResult: null, // 'won' | 'lost' | null
     };
 }

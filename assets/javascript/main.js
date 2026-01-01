@@ -2,7 +2,7 @@
 
 import { state, resetState, ROSTER, Phase, Fighter } from './state.js';
 import { executeCombatRound, checkBattleOutcome, getCombatMessage } from './engine.js';
-import { render, renderRoster, getGameContainer, getFightButton } from './ui.js';
+import { renderAll, renderRoster, getGameContainer, getFightButton } from './ui.js';
 
 // Audio
 const ohJeez = new Audio('./assets/audio/oh_jeez.mp3');
@@ -20,14 +20,23 @@ function cloneRoster() {
 function initGame() {
     resetState();
     const roster = cloneRoster();
-    state.message = 'Select your Morty!';
+    state.log = [];
+    setMessage('Select your Morty!', { log: true });
     renderRoster(roster);
-    render(state);
+    renderAll(state);
     return roster;
 }
 
 // Current roster (mutable during game)
 let currentRoster = [];
+
+function setMessage(message, { log = false } = {}) {
+    state.message = message;
+
+    if (log && message) {
+        state.log.push(message);
+    }
+}
 
 /**
  * Handle selecting a fighter from roster or enemies
@@ -42,8 +51,8 @@ function handleFighterClick(fighterId) {
         state.player = selectedFighter;
         state.enemies = currentRoster; // Remaining fighters become enemies
         state.phase = Phase.PICK_ENEMY;
-        state.message = 'Pick an opponent!';
-        render(state);
+        setMessage('Pick an opponent!', { log: true });
+        renderAll(state);
     } else if (state.phase === Phase.PICK_ENEMY) {
         // Don't allow clicking own fighter
         if (fighterId === state.player.id) return;
@@ -55,8 +64,8 @@ function handleFighterClick(fighterId) {
         const selectedEnemy = state.enemies.splice(index, 1)[0];
         state.enemy = selectedEnemy;
         state.phase = Phase.BATTLE;
-        state.message = '';
-        render(state);
+        setMessage('');
+        renderAll(state);
     }
 }
 
@@ -76,6 +85,7 @@ function handleFightClick() {
             result.playerDamage,
             result.enemyDamage
         );
+        setMessage(state.message, { log: true });
 
         // Check outcome
         const outcome = checkBattleOutcome(state);
@@ -85,20 +95,20 @@ function handleFightClick() {
                 state.enemiesDefeated++;
                 state.phase = Phase.GAME_OVER;
                 state.gameResult = 'won';
-                state.message = 'You Won! Play Again.';
+                setMessage('You Won! Play Again.', { log: true });
                 break;
 
             case 'playerDead':
                 state.phase = Phase.GAME_OVER;
                 state.gameResult = 'lost';
-                state.message = 'You Lost! Try Again.';
+                setMessage('You Lost! Try Again.', { log: true });
                 break;
 
             case 'enemyDead':
                 state.enemiesDefeated++;
                 state.enemy = null;
                 state.phase = Phase.PICK_ENEMY;
-                state.message = 'Pick an opponent!';
+                setMessage('Pick an opponent!', { log: true });
                 break;
 
             case 'continue':
@@ -107,7 +117,7 @@ function handleFightClick() {
                 break;
         }
 
-        render(state);
+        renderAll(state);
     } else if (state.phase === Phase.GAME_OVER) {
         // Reset and start new game
         currentRoster = initGame();
